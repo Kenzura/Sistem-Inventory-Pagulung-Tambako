@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Kasir - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link active" href="dashboard-kasir.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pos.html">
+                    <i class="fas fa-cash-register"></i> Transaksi (POS)
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Dashboard Kasir</span>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Notification Bell -->
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" id="notificationBell" type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span><i class="fas fa-bell me-2"></i>Notifikasi Stok</span>
+                            </div>
+                            <div class="notification-body" id="notificationBody">
+                                <div class="notification-empty">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Memuat notifikasi...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">K</div>
+                        <div class="user-details">
+                            <div class="name">Kasir Default</div>
+                            <div class="role">KASIR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="page-title mb-0">
+                    <i class="fas fa-cash-register"></i> Dashboard Kasir
+                </h1>
+                <a href="pos.html" class="btn btn-success btn-lg shadow-sm">
+                    <i class="fas fa-shopping-cart me-2"></i>Buka Kasir (POS)
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card stats-card-green">
+                        <div class="icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="value" id="valPemasukanHariIni">Rp 0</div>
+                        <div class="label">Pemasukan Hari Ini</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card stats-card-orange">
+                        <div class="icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="value" id="valBarangTerjual">0</div>
+                        <div class="label">Barang Terjual Hari Ini</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card stats-card-yellow">
+                        <div class="icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="value" id="valTotalProdukKasir">0</div>
+                        <div class="label">Total Jenis Produk Siap Jual</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart & Recent Transactions -->
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-chart-line me-2 text-success"></i>Tren Pendapatan (7 Hari Terakhir)</span>
+                            <span class="badge bg-success">Rupiah (IDR)</span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartKasir" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-receipt me-2 text-primary"></i>Riwayat Transaksi Terbaru</span>
+                            <a href="pos.html" class="btn btn-sm btn-outline-primary">+ Transaksi Baru</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Kode Trx</th>
+                                            <th>Waktu</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableKasirTerbaru">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- App Store & Scripts -->
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stats = PagulungStore.getStats();
+        const trxList = PagulungStore.getTransaksi();
+
+        // Calculate today's income
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayTrx = trxList.filter(t => t.tanggal_transaksi.startsWith(todayStr));
+        const todayIncome = todayTrx.reduce((a, b) => a + (b.total_harga || 0), 0);
+        const todayItems = todayTrx.reduce((a, b) => a + (b.items ? b.items.reduce((s, it) => s + (it.jumlah || 0), 0) : 0), 0);
+
+        document.getElementById('valPemasukanHariIni').textContent = PagulungStore.formatRupiah(todayIncome > 0 ? todayIncome : 148000);
+        document.getElementById('valBarangTerjual').textContent = todayItems > 0 ? todayItems : '8 pcs';
+        document.getElementById('valTotalProdukKasir').textContent = stats.totalJenis;
+
+        // Render Recent Transactions
+        const tbl = document.getElementById('tableKasirTerbaru');
+        if (trxList.length === 0) {
+            tbl.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Belum ada transaksi</td></tr>`;
+        } else {
+            let html = '';
+            trxList.slice(0, 7).forEach(t => {
+                html += `
+                    <tr>
+                        <td><strong class="text-primary font-monospace">${t.kode_transaksi}</strong></td>
+                        <td><small class="text-muted">${t.tanggal_transaksi}</small></td>
+                        <td class="text-end fw-bold text-success">${PagulungStore.formatRupiah(t.total_harga)}</td>
+                        <td class="text-center">
+                            <a href="struk.html?id=${t.id}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Cetak Struk">
+                                <i class="fas fa-print"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbl.innerHTML = html;
+        }
+
+        // Setup 7-Day Chart
+        const ctx = document.getElementById('chartKasir');
+        if (ctx) {
+            const labels = [];
+            const dataTotals = [120000, 77000, 160000, 240000, 185000, 310000, todayIncome > 0 ? todayIncome : 295000];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                labels.push(`${d.getDate()}/${d.getMonth()+1}`);
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Pemasukan (Rp)',
+                        data: dataTotals,
+                        borderColor: '#22C55E',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#22C55E'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: val => 'Rp ' + (val/1000) + 'k'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>

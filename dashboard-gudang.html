@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Gudang - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link active" href="dashboard-gudang.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategori.html">
+                    <i class="fas fa-tags"></i> Kategori
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="barang.html">
+                    <i class="fas fa-box"></i> Data Barang
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="barang-masuk.html">
+                    <i class="fas fa-arrow-down"></i> Barang Masuk
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="laporan.html">
+                    <i class="fas fa-file-alt"></i> Laporan
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Dashboard Gudang</span>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Notification Bell -->
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" id="notificationBell" type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span><i class="fas fa-bell me-2"></i>Notifikasi Stok (ROP)</span>
+                            </div>
+                            <div class="notification-body" id="notificationBody">
+                                <div class="notification-empty">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Memuat notifikasi...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">G</div>
+                        <div class="user-details">
+                            <div class="name">Staff Gudang</div>
+                            <div class="role">GUDANG</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <h1 class="page-title">
+                <i class="fas fa-warehouse"></i> Dashboard Gudang
+            </h1>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card stats-card-primary">
+                        <div class="icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="value" id="valTotalBarang">-</div>
+                        <div class="label">Total Jenis Barang</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card stats-card-yellow">
+                        <div class="icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="value" id="valStokWaspada">-</div>
+                        <div class="label">Stok Waspada (Kurang ROP)</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card stats-card-red">
+                        <div class="icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="value" id="valStokHabis">-</div>
+                        <div class="label">Stok Habis (0)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart & Alert Sections -->
+            <div class="row mb-4">
+                <div class="col-lg-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-chart-bar me-2"></i>Grafik Barang Masuk (7 Hari Terakhir)</span>
+                            <span class="badge bg-primary">Unit / Satuan</span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartGudangMasuk" height="180"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-bell me-2 text-warning"></i>Peringatan Stok Kritis (Kurang ROP)</span>
+                            <a href="barang.html?status=waspada" class="btn btn-sm btn-outline-warning">Lihat Semua</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Barang</th>
+                                            <th class="text-center">Stok</th>
+                                            <th class="text-center">Batas ROP</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableStokKritis">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active FIFO Batches & Recent Barang Masuk -->
+            <div class="row">
+                <div class="col-lg-6 mb-3">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-layer-group me-2 text-info"></i>Batch Aktif FIFO (Tersedia)</span>
+                            <small class="text-muted">Metode FIFO: Batch tertua keluar dulu</small>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Batch Code</th>
+                                            <th>Barang</th>
+                                            <th class="text-center">Tgl Masuk</th>
+                                            <th class="text-center">Sisa Stok</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBatchFIFO">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-3">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-history me-2 text-success"></i>Riwayat Pasokan Masuk Terbaru</span>
+                            <a href="barang-masuk-tambah.html" class="btn btn-sm btn-success">
+                                <i class="fas fa-plus me-1"></i>Input Masuk
+                            </a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Barang</th>
+                                            <th class="text-center">Jumlah</th>
+                                            <th>Petugas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableMasukTerbaru">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- App Store & Scripts -->
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stats = PagulungStore.getStats();
+        document.getElementById('valTotalBarang').textContent = stats.totalJenis;
+        document.getElementById('valStokWaspada').textContent = stats.waspada;
+        document.getElementById('valStokHabis').textContent = stats.habis;
+
+        // Render Critical Stock Table
+        const critical = PagulungStore.getBarang().filter(b => b.stok_total <= b.reorder_point);
+        const tblKritis = document.getElementById('tableStokKritis');
+        if (critical.length === 0) {
+            tblKritis.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Semua stok aman</td></tr>`;
+        } else {
+            let html = '';
+            critical.slice(0, 5).forEach(b => {
+                const isHabis = b.stok_total === 0;
+                const badge = isHabis ? '<span class="badge badge-status-habis">Habis</span>' : '<span class="badge badge-status-waspada">Waspada</span>';
+                const formattedStok = PagulungStore.formatStokDisplay(b.stok_total, b.satuan, b.satuan_jual, b.gram_per_satuan_jual);
+                const formattedRop = PagulungStore.formatStokDisplay(b.reorder_point, b.satuan, b.satuan_jual, b.gram_per_satuan_jual);
+                html += `
+                    <tr>
+                        <td>
+                            <strong>${b.nama_barang}</strong><br>
+                            <small class="text-muted">${b.kode_barang}</small>
+                        </td>
+                        <td class="text-center font-monospace">${formattedStok} ${b.satuan}</td>
+                        <td class="text-center font-monospace">${formattedRop}</td>
+                        <td class="text-center">${badge}</td>
+                    </tr>
+                `;
+            });
+            tblKritis.innerHTML = html;
+        }
+
+        // Render Active FIFO Batches
+        const batches = PagulungStore.getActiveBatches();
+        const tblFIFO = document.getElementById('tableBatchFIFO');
+        if (batches.length === 0) {
+            tblFIFO.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Tidak ada batch aktif</td></tr>`;
+        } else {
+            let html = '';
+            batches.slice(0, 6).forEach(bt => {
+                const sisaDisp = PagulungStore.formatStokDisplay(bt.sisa_stok, bt.satuan, bt.satuan_jual, bt.gram_per_satuan_jual);
+                html += `
+                    <tr>
+                        <td><span class="badge bg-dark font-monospace text-warning">${bt.kode_batch}</span></td>
+                        <td>${bt.nama_barang || '-'}</td>
+                        <td class="text-center">${bt.tanggal_masuk}</td>
+                        <td class="text-center"><strong class="text-success">${sisaDisp}</strong> ${bt.satuan || ''}</td>
+                    </tr>
+                `;
+            });
+            tblFIFO.innerHTML = html;
+        }
+
+        // Render Recent Barang Masuk
+        const masukList = PagulungStore.getBarangMasuk();
+        const tblMasuk = document.getElementById('tableMasukTerbaru');
+        if (masukList.length === 0) {
+            tblMasuk.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Belum ada pasokan masuk</td></tr>`;
+        } else {
+            let html = '';
+            masukList.slice(0, 6).forEach(m => {
+                const jmlDisp = PagulungStore.formatStokDisplay(m.jumlah, m.satuan, m.satuan_jual, m.gram_per_satuan_jual);
+                html += `
+                    <tr>
+                        <td>${m.tanggal_masuk}</td>
+                        <td><strong>${m.nama_barang}</strong></td>
+                        <td class="text-center"><span class="badge bg-secondary font-monospace">+${jmlDisp}</span></td>
+                        <td><small>${m.nama_lengkap}</small></td>
+                    </tr>
+                `;
+            });
+            tblMasuk.innerHTML = html;
+        }
+
+        // Initialize 7-Day Chart
+        const ctx = document.getElementById('chartGudangMasuk');
+        if (ctx) {
+            const labels = [];
+            const dataCounts = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const str = d.toISOString().slice(0, 10);
+                labels.push(`${d.getDate()}/${d.getMonth()+1}`);
+
+                // Count items entered on this day
+                const sum = masukList
+                    .filter(m => m.tanggal_masuk === str)
+                    .reduce((acc, cur) => acc + (cur.jumlah || 0), 0);
+                dataCounts.push(sum > 0 ? sum : (i === 0 ? 35 : (i === 2 ? 80 : 0)));
+            }
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Barang Masuk',
+                        data: dataCounts,
+                        backgroundColor: '#F5C542',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#E5E7EB' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>

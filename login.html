@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Pagulung Tambako Bone Community</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+
+    <style>
+        .demo-quick-box {
+            background: rgba(245, 197, 66, 0.08);
+            border: 1px dashed rgba(245, 197, 66, 0.35);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+        .demo-quick-title {
+            font-size: 0.78rem;
+            color: #F5C542;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .demo-quick-item {
+            background: #1C1C1C;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .demo-quick-item:hover {
+            background: #272727;
+            border-color: #F5C542;
+            transform: translateY(-1px);
+        }
+        .demo-quick-role {
+            font-weight: 600;
+            color: #FFF;
+            font-size: 0.85rem;
+        }
+        .demo-quick-sub {
+            font-size: 0.75rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-card">
+        <div class="brand-header">
+            <img src="images/login.png" alt="Pagulung Logo" class="login-logo">
+            <h1>Pagulung Tambako</h1>
+            <small>Sistem Persediaan Gudang & POS</small>
+        </div>
+        
+        <h2>Selamat Datang!</h2>
+        <p>Silakan masuk atau gunakan tombol cepat demo di bawah</p>
+        
+        <!-- Demo Quick Logins -->
+        <div class="demo-quick-box">
+            <div class="demo-quick-title">
+                <i class="fas fa-bolt"></i> Masuk Cepat Demo (1-Click)
+            </div>
+            <div class="demo-quick-item" onclick="quickLogin('gudang')">
+                <div>
+                    <div class="demo-quick-role"><i class="fas fa-warehouse text-warning me-2"></i>Staff Gudang</div>
+                    <div class="demo-quick-sub">Kelola stok barang, batch FIFO & ROP</div>
+                </div>
+                <i class="fas fa-arrow-right text-warning"></i>
+            </div>
+            <div class="demo-quick-item" onclick="quickLogin('kasir')">
+                <div>
+                    <div class="demo-quick-role"><i class="fas fa-cash-register text-success me-2"></i>Kasir Default</div>
+                    <div class="demo-quick-sub">Point of Sale, keranjang belanja & struk</div>
+                </div>
+                <i class="fas fa-arrow-right text-success"></i>
+            </div>
+            <div class="demo-quick-item" onclick="quickLogin('pimpinan')">
+                <div>
+                    <div class="demo-quick-role"><i class="fas fa-user-tie text-info me-2"></i>Pimpinan</div>
+                    <div class="demo-quick-sub">Monitoring stok kritis, user & laporan</div>
+                </div>
+                <i class="fas fa-arrow-right text-info"></i>
+            </div>
+        </div>
+
+        <div id="loginAlert" class="alert alert-danger border-0 d-none" style="background: rgba(239, 68, 68, 0.1); color: #EF4444; border-left: 3px solid #EF4444 !important;">
+            <i class="fas fa-exclamation-circle me-2"></i><span id="alertMsg"></span>
+        </div>
+        
+        <form id="formLogin" onsubmit="handleFormLogin(event)">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" id="inputUsername" name="username" placeholder="gudang / kasir / pimpinan" required autofocus>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="inputPassword" name="password" placeholder="password apa saja" required>
+            </div>
+            
+            <button type="submit" class="btn btn-login">
+                <i class="fas fa-sign-in-alt me-2"></i>Masuk
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="index.html" style="color: #D1C4B0; font-size: 0.85rem; text-decoration: none;">
+                <i class="fas fa-arrow-left me-1"></i>Kembali ke Beranda
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS & Stores -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    function quickLogin(role) {
+        let user;
+        if (role === 'gudang') user = { id: 2, username: 'gudang', nama_lengkap: 'Staff Gudang', role: 'gudang' };
+        else if (role === 'kasir') user = { id: 1, username: 'kasir', nama_lengkap: 'Kasir Default', role: 'kasir' };
+        else if (role === 'pimpinan') user = { id: 3, username: 'pimpinan', nama_lengkap: 'Pimpinan Pagulung', role: 'pimpinan' };
+
+        PagulungStore.setCurrentUser(user);
+        window.location.href = `dashboard-${role}.html`;
+    }
+
+    function handleFormLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('inputUsername').value.trim();
+        const password = document.getElementById('inputPassword').value;
+        const res = PagulungStore.login(username, password);
+
+        if (res.success) {
+            window.location.href = `dashboard-${res.user.role}.html`;
+        } else {
+            // Check if matches known roles
+            const lower = username.toLowerCase();
+            if (lower === 'gudang' || lower === 'kasir' || lower === 'pimpinan') {
+                quickLogin(lower);
+            } else {
+                const alertEl = document.getElementById('loginAlert');
+                const msgEl = document.getElementById('alertMsg');
+                alertEl.classList.remove('d-none');
+                msgEl.textContent = 'Gunakan username: gudang, kasir, atau pimpinan';
+            }
+        }
+    }
+    </script>
+</body>
+</html>

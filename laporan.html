@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Persediaan & Penjualan - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard-pimpinan.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="users.html">
+                    <i class="fas fa-users"></i> Kelola User
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="laporan.html">
+                    <i class="fas fa-file-alt"></i> Laporan
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Laporan & Rekapitulasi</span>
+                
+                <div class="d-flex align-items-center">
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" id="notificationBell" type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span><i class="fas fa-bell me-2"></i>Notifikasi Stok</span>
+                            </div>
+                            <div class="notification-body" id="notificationBody"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">P</div>
+                        <div class="user-details">
+                            <div class="name">Pimpinan Pagulung</div>
+                            <div class="role">PIMPINAN</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="page-title mb-0">
+                    <i class="fas fa-file-invoice"></i> Laporan & Analitik Sistem
+                </h1>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-danger" onclick="simulateExport('PDF')">
+                        <i class="fas fa-file-pdf me-1"></i>Cetak / PDF
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="simulateExport('Excel')">
+                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs Nav -->
+            <ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="tab-masuk-btn" data-bs-toggle="tab" data-bs-target="#tab-masuk">
+                        <i class="fas fa-arrow-down me-2"></i>Barang Masuk
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-stok-btn" data-bs-toggle="tab" data-bs-target="#tab-stok">
+                        <i class="fas fa-boxes-stacked me-2"></i>Stok & ROP
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-transaksi-btn" data-bs-toggle="tab" data-bs-target="#tab-transaksi">
+                        <i class="fas fa-cash-register me-2"></i>Transaksi Penjualan
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-hpp-btn" data-bs-toggle="tab" data-bs-target="#tab-hpp">
+                        <i class="fas fa-calculator me-2"></i>Laporan HPP FIFO
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="reportTabsContent">
+                
+                <!-- 1. TAB BARANG MASUK -->
+                <div class="tab-pane fade show active" id="tab-masuk">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tanggal Mulai</label>
+                                    <input type="date" class="form-control" id="lapMasukMulai" value="2026-01-01" onchange="renderLapMasuk()">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Tanggal Selesai</label>
+                                    <input type="date" class="form-control" id="lapMasukSelesai" onchange="renderLapMasuk()">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="alert alert-info py-2 mb-0">
+                                        <i class="fas fa-info-circle me-1"></i><span id="summaryMasukText">Memuat...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Kode Batch</th>
+                                            <th>Barang</th>
+                                            <th class="text-center">Jumlah Masuk</th>
+                                            <th>Petugas</th>
+                                            <th>Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblLapMasuk"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TAB STOK BARANG -->
+                <div class="tab-pane fade" id="tab-stok">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="card bg-light p-3 text-center">
+                                <small class="text-muted">Total Jenis</small>
+                                <strong class="fs-4 text-dark" id="stkTotalJenis">-</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light p-3 text-center">
+                                <small class="text-muted">Stok Kondisi Aman</small>
+                                <strong class="fs-4 text-success" id="stkAman">-</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light p-3 text-center">
+                                <small class="text-muted">Kondisi Waspada (Kurang ROP)</small>
+                                <strong class="fs-4 text-warning" id="stkWaspada">-</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light p-3 text-center">
+                                <small class="text-muted">Stok Habis</small>
+                                <strong class="fs-4 text-danger" id="stkHabis">-</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Kode</th>
+                                            <th>Kategori</th>
+                                            <th>Nama Produk</th>
+                                            <th class="text-end">Harga Jual</th>
+                                            <th class="text-center">Stok Fisik</th>
+                                            <th class="text-center">Batas ROP</th>
+                                            <th class="text-center">Safety Stock</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblLapStok"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TAB TRANSAKSI PENJUALAN -->
+                <div class="tab-pane fade" id="tab-transaksi">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tanggal Mulai</label>
+                                    <input type="date" class="form-control" id="lapTrxMulai" value="2026-01-01" onchange="renderLapTrx()">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Tanggal Selesai</label>
+                                    <input type="date" class="form-control" id="lapTrxSelesai" onchange="renderLapTrx()">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="alert alert-success py-2 mb-0">
+                                        <i class="fas fa-sack-dollar me-1"></i><span id="summaryTrxText">Memuat...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>No. Transaksi</th>
+                                            <th>Waktu Transaksi</th>
+                                            <th>Kasir</th>
+                                            <th>Detail Item Terjual</th>
+                                            <th class="text-end">Total Belanja</th>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblLapTrx"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. TAB LAPORAN HPP FIFO -->
+                <div class="tab-pane fade" id="tab-hpp">
+                    <div class="alert alert-secondary mb-3">
+                        <i class="fas fa-calculator me-2"></i>
+                        <strong>Prinsip FIFO & HPP:</strong> Harga Pokok Penjualan dihitung dari batch barang masuk terlama yang pertama kali terjual.
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-layer-group me-2"></i>Status Seluruh Batch & Alokasi FIFO
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Kode Batch</th>
+                                            <th>Nama Produk</th>
+                                            <th class="text-center">Tanggal Masuk</th>
+                                            <th class="text-center">Jumlah Awal</th>
+                                            <th class="text-center">Sisa Stok</th>
+                                            <th class="text-center">Status Alokasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblLapHpp"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('lapMasukSelesai').value = today;
+        document.getElementById('lapTrxSelesai').value = today;
+
+        // Check if tab in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab) {
+            const btn = document.getElementById(`tab-${tab}-btn`);
+            if (btn) {
+                const trigger = new bootstrap.Tab(btn);
+                trigger.show();
+            }
+        }
+
+        renderLapMasuk();
+        renderLapStok();
+        renderLapTrx();
+        renderLapHpp();
+    });
+
+    function renderLapMasuk() {
+        const tglMulai = document.getElementById('lapMasukMulai').value;
+        const tglSelesai = document.getElementById('lapMasukSelesai').value;
+        const list = PagulungStore.getBarangMasuk({ tanggal_mulai: tglMulai, tanggal_selesai: tglSelesai });
+
+        const totalQty = list.reduce((a, b) => a + (b.jumlah || 0), 0);
+        document.getElementById('summaryMasukText').textContent = `Total ${list.length} transaksi pasokan (${totalQty.toLocaleString('id-ID')} unit)`;
+
+        const tbody = document.getElementById('tblLapMasuk');
+        if (list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">Tidak ada data barang masuk</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        list.forEach((m, idx) => {
+            const jmlDisp = PagulungStore.formatStokDisplay(m.jumlah, m.satuan, m.satuan_jual, m.gram_per_satuan_jual);
+            html += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${m.tanggal_masuk}</td>
+                    <td><span class="badge bg-dark font-monospace text-warning">${m.kode_batch}</span></td>
+                    <td><strong>${m.nama_barang}</strong><br><small class="text-muted">${m.kode_barang}</small></td>
+                    <td class="text-center font-monospace fw-bold">+${jmlDisp} ${m.satuan}</td>
+                    <td><small>${m.nama_lengkap}</small></td>
+                    <td><small class="text-muted">${m.keterangan || '-'}</small></td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function renderLapStok() {
+        const stats = PagulungStore.getStats();
+        document.getElementById('stkTotalJenis').textContent = stats.totalJenis;
+        document.getElementById('stkAman').textContent = stats.aman;
+        document.getElementById('stkWaspada').textContent = stats.waspada;
+        document.getElementById('stkHabis').textContent = stats.habis;
+
+        const all = PagulungStore.getBarang();
+        const tbody = document.getElementById('tblLapStok');
+        let html = '';
+
+        all.forEach(b => {
+            let badge = '<span class="badge badge-status-aman">Aman</span>';
+            if (b.status_stok === 'Habis') badge = '<span class="badge badge-status-habis">Habis</span>';
+            else if (b.status_stok === 'Waspada') badge = '<span class="badge badge-status-waspada">Waspada</span>';
+
+            const stokDisp = PagulungStore.formatStokDisplay(b.stok_total, b.satuan, b.satuan_jual, b.gram_per_satuan_jual);
+            const ropDisp = PagulungStore.formatStokDisplay(b.reorder_point, b.satuan, b.satuan_jual, b.gram_per_satuan_jual);
+
+            html += `
+                <tr>
+                    <td><strong class="font-monospace text-primary">${b.kode_barang}</strong></td>
+                    <td><span class="badge bg-light text-dark border">${b.nama_kategori}</span></td>
+                    <td><strong>${b.nama_barang}</strong></td>
+                    <td class="text-end">${PagulungStore.formatRupiah(b.harga_jual)}</td>
+                    <td class="text-center fw-bold fs-6">${stokDisp} ${b.satuan}</td>
+                    <td class="text-center font-monospace">${ropDisp}</td>
+                    <td class="text-center text-muted">${b.safety_stock}</td>
+                    <td class="text-center">${badge}</td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function renderLapTrx() {
+        const tglMulai = document.getElementById('lapTrxMulai').value;
+        const tglSelesai = document.getElementById('lapTrxSelesai').value;
+        const list = PagulungStore.getTransaksi({ tanggal_mulai: tglMulai, tanggal_selesai: tglSelesai });
+
+        const totalOmset = list.reduce((a, b) => a + (b.total_harga || 0), 0);
+        document.getElementById('summaryTrxText').textContent = `Total Omset: ${PagulungStore.formatRupiah(totalOmset)} (${list.length} transaksi)`;
+
+        const tbody = document.getElementById('tblLapTrx');
+        if (list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Tidak ada transaksi penjualan</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        list.forEach(t => {
+            const itemsStr = (t.items || []).map(i => `${i.nama_barang} (${i.jumlah}x)`).join(', ');
+            html += `
+                <tr>
+                    <td><strong class="font-monospace text-primary">${t.kode_transaksi}</strong></td>
+                    <td><small class="text-muted">${t.tanggal_transaksi}</small></td>
+                    <td>${t.nama_lengkap || 'Kasir'}</td>
+                    <td><small class="text-dark">${itemsStr || '-'}</small></td>
+                    <td class="text-end fw-bold text-success">${PagulungStore.formatRupiah(t.total_harga)}</td>
+                    <td class="text-center">
+                        <a href="struk.html?id=${t.id}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-print"></i>
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function renderLapHpp() {
+        const raw = PagulungStore.loadData();
+        const batches = raw.batches || [];
+        const barangList = raw.barang || [];
+
+        const tbody = document.getElementById('tblLapHpp');
+        if (batches.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data batch</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        batches.forEach(bt => {
+            const b = barangList.find(x => x.id === bt.barang_id) || {};
+            const isExhausted = bt.sisa_stok === 0;
+            const statusBadge = isExhausted 
+                ? '<span class="badge bg-secondary">Habis Terjual (FIFO Out)</span>' 
+                : '<span class="badge bg-success">Stok Masih Tersedia</span>';
+
+            html += `
+                <tr>
+                    <td><span class="badge bg-dark font-monospace text-warning">${bt.kode_batch}</span></td>
+                    <td><strong>${b.nama_barang || '-'}</strong> <small class="text-muted">(${b.kode_barang || ''})</small></td>
+                    <td class="text-center">${bt.tanggal_masuk}</td>
+                    <td class="text-center font-monospace">${bt.jumlah_awal.toLocaleString('id-ID')}</td>
+                    <td class="text-center font-monospace fw-bold">${bt.sisa_stok.toLocaleString('id-ID')}</td>
+                    <td class="text-center">${statusBadge}</td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function simulateExport(format) {
+        showToast(`Dokumen laporan berhasil disiapkan dalam format ${format}. Membuka dialog print...`, 'info');
+        setTimeout(() => {
+            window.print();
+        }, 600);
+    }
+    </script>
+</body>
+</html>

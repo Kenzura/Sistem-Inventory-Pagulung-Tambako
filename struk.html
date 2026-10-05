@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struk Pembayaran - Pagulung Tambako Bone</title>
+    <link rel="icon" type="image/png" href="images/login.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body class="print-receipt">
+    <div class="print-receipt">
+        <div class="header">
+            <h1>Pagulung Tambako</h1>
+            <p>
+                Sistem Persediaan Gudang & POS<br>
+                UMKM Pagulung Tambako Bone
+            </p>
+        </div>
+        
+        <div class="info">
+            <table>
+                <tr>
+                    <td width="40%">No. Transaksi</td>
+                    <td id="receiptTrxCode">: -</td>
+                </tr>
+                <tr>
+                    <td>Tanggal</td>
+                    <td id="receiptDate">: -</td>
+                </tr>
+                <tr>
+                    <td>Kasir</td>
+                    <td id="receiptCashier">: -</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="items" id="receiptItems">
+            <!-- Dynamic item lines -->
+        </div>
+        
+        <div class="totals">
+            <table>
+                <tr>
+                    <td>TOTAL</td>
+                    <td style="text-align: right;" id="receiptTotal">Rp 0</td>
+                </tr>
+                <tr>
+                    <td>BAYAR</td>
+                    <td style="text-align: right;" id="receiptBayar">Rp 0</td>
+                </tr>
+                <tr class="grand-total">
+                    <td>KEMBALIAN</td>
+                    <td style="text-align: right;" id="receiptKembalian">Rp 0</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>
+                Terima kasih atas kunjungan Anda!<br>
+                Barang yang sudah dibeli tidak dapat dikembalikan.<br>
+                Komunitas Pagulung Tambako Bone
+            </p>
+        </div>
+        
+        <div class="no-print" style="text-align: center; margin-top: 25px;">
+            <button onclick="window.print()" class="btn btn-dark" style="padding: 8px 20px; font-weight: 600; cursor: pointer; border-radius: 6px;">
+                <i class="fas fa-print me-1"></i> Cetak Struk
+            </button>
+            <a href="pos.html" class="btn btn-outline-secondary" style="padding: 8px 20px; margin-left: 10px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Kembali ke POS
+            </a>
+        </div>
+    </div>
+
+    <!-- Store & Scripts -->
+    <script src="js/store.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        let trx;
+        if (id) {
+            trx = PagulungStore.getTransaksiById(id);
+        }
+        if (!trx) {
+            // Fallback to most recent transaction
+            const list = PagulungStore.getTransaksi();
+            trx = list.length > 0 ? list[0] : null;
+        }
+
+        if (!trx) {
+            alert('Tidak ada data transaksi!');
+            window.location.href = 'pos.html';
+            return;
+        }
+
+        document.getElementById('receiptTrxCode').textContent = `: ${trx.kode_transaksi}`;
+        document.getElementById('receiptDate').textContent = `: ${trx.tanggal_transaksi}`;
+        document.getElementById('receiptCashier').textContent = `: ${trx.nama_lengkap || trx.nama_kasir || 'Kasir Default'}`;
+
+        document.getElementById('receiptTotal').textContent = PagulungStore.formatRupiah(trx.total_harga);
+        document.getElementById('receiptBayar').textContent = PagulungStore.formatRupiah(trx.bayar || trx.total_harga);
+        document.getElementById('receiptKembalian').textContent = PagulungStore.formatRupiah(trx.kembalian || 0);
+
+        const itemsContainer = document.getElementById('receiptItems');
+        let html = '';
+        (trx.items || []).forEach(it => {
+            html += `
+                <div class="item">
+                    <div class="item-name">${it.nama_barang}</div>
+                    <div class="item-detail">
+                        <span>${it.jumlah} pcs x ${PagulungStore.formatRupiah(it.harga_satuan)}</span>
+                        <span>${PagulungStore.formatRupiah(it.subtotal)}</span>
+                    </div>
+                </div>
+            `;
+        });
+        itemsContainer.innerHTML = html;
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+/* ========================================================
+   Demo Navigator Floating Dock for Pagulung Tambako
+   ======================================================== */
+
+.pagulung-demo-dock {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 999999;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dock-trigger-btn {
+    background: linear-gradient(135deg, #1A1A1A 0%, #0F0F0F 100%);
+    color: #F5C542;
+    border: 1px solid rgba(245, 197, 66, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 15px rgba(245, 197, 66, 0.25);
+    border-radius: 50px;
+    padding: 10px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+.dock-trigger-btn:hover {
+    background: #262626;
+    color: #FFF;
+    border-color: #F5C542;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 197, 66, 0.4);
+}
+
+.dock-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #22C55E;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #22C55E;
+    animation: dockPulse 2s infinite;
+}
+
+@keyframes dockPulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.dock-panel {
+    display: none;
+    position: absolute;
+    bottom: 52px;
+    right: 0;
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    max-height: 80vh;
+    background: #141414;
+    border: 1px solid rgba(245, 197, 66, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    flex-direction: column;
+    animation: dockSlideUp 0.25s ease-out;
+}
+
+.dock-panel.show {
+    display: flex;
+}
+
+@keyframes dockSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dock-header {
+    background: #1C1C1C;
+    padding: 14px 18px;
+    border-bottom: 1px solid #2B2B2B;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dock-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #F5C542;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.dock-close-btn {
+    background: transparent;
+    border: none;
+    color: #A0A0A0;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    line-height: 1;
+}
+
+.dock-close-btn:hover {
+    color: #FFF;
+}
+
+.dock-body {
+    padding: 14px 18px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+
+.dock-role-switcher {
+    background: #1E1E1E;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 14px;
+    border: 1px solid #333;
+}
+
+.dock-role-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #8E8E93;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dock-role-badge {
+    background: rgba(245, 197, 66, 0.15);
+    color: #F5C542;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.dock-role-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.dock-role-btn {
+    background: #282828;
+    color: #DDD;
+    border: 1px solid #3D3D3D;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.dock-role-btn:hover {
+    background: #383838;
+    color: #FFF;
+}
+
+.dock-role-btn.active {
+    background: #F5C542;
+    color: #0F0F0F;
+    border-color: #F5C542;
+    font-weight: 700;
+}
+
+.dock-nav-section {
+    margin-bottom: 14px;
+}
+
+.dock-section-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: #F5C542;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dock-links-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.dock-link-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: #1B1B1B;
+    border: 1px solid #292929;
+    color: #CCC;
+    text-decoration: none;
+    font-size: 0.78rem;
+    transition: all 0.15s ease;
+}
+
+.dock-link-item:hover {
+    background: #252525;
+    color: #FFF;
+    border-color: #444;
+    transform: translateY(-1px);
+}
+
+.dock-link-item.active {
+    background: rgba(245, 197, 66, 0.12);
+    border-color: rgba(245, 197, 66, 0.4);
+    color: #F5C542;
+    font-weight: 600;
+}
+
+.dock-footer {
+    background: #181818;
+    border-top: 1px solid #2B2B2B;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dock-reset-btn {
+    background: transparent;
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dock-reset-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #F87171;
+}
+
+.dock-badge-github {
+    color: #A0A0A0;
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

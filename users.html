@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Akun User - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard-pimpinan.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="users.html">
+                    <i class="fas fa-users"></i> Kelola User
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="laporan.html">
+                    <i class="fas fa-file-alt"></i> Laporan
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Kelola Akun User</span>
+                
+                <div class="d-flex align-items-center">
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" id="notificationBell" type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span><i class="fas fa-bell me-2"></i>Notifikasi Stok</span>
+                            </div>
+                            <div class="notification-body" id="notificationBody"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">P</div>
+                        <div class="user-details">
+                            <div class="name">Pimpinan Pagulung</div>
+                            <div class="role">PIMPINAN</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <h1 class="page-title">
+                <i class="fas fa-users"></i> Manajemen Pengguna Sistem
+            </h1>
+
+            <!-- Filter & Add -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row align-items-end g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Cari Pengguna</label>
+                            <input type="text" class="form-control" id="searchUser" placeholder="Username atau nama...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Role Akses</label>
+                            <select class="form-select" id="roleUser">
+                                <option value="">Semua Role</option>
+                                <option value="gudang">Gudang</option>
+                                <option value="kasir">Kasir</option>
+                                <option value="pimpinan">Pimpinan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="statusUser">
+                                <option value="">Semua Status</option>
+                                <option value="aktif">Aktif</option>
+                                <option value="nonaktif">Nonaktif</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 text-md-end">
+                            <button type="button" class="btn btn-success" onclick="openAddUserModal()">
+                                <i class="fas fa-plus me-1"></i>Tambah User Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-list me-2"></i>Daftar Akun Pengguna Terdaftar
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="20%">Username</th>
+                                    <th width="30%">Nama Lengkap</th>
+                                    <th width="15%">Role</th>
+                                    <th width="15%" class="text-center">Status</th>
+                                    <th width="15%" class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblUsers">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Form User -->
+    <div class="modal fade" id="modalUser" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formUser" onsubmit="handleSaveUser(event)">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalUserTitle">Tambah User Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="userId">
+                        <div class="mb-3">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control font-monospace" id="uUsername" required placeholder="Contoh: kasir2, staff_gudang">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="uNama" required placeholder="Contoh: Budi Santoso">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Peran (Role) <span class="text-danger">*</span></label>
+                            <select class="form-select" id="uRole" required>
+                                <option value="gudang">Staff Gudang</option>
+                                <option value="kasir">Kasir POS</option>
+                                <option value="pimpinan">Pimpinan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    let userModal;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        userModal = new bootstrap.Modal(document.getElementById('modalUser'));
+        renderTable();
+
+        document.getElementById('searchUser').addEventListener('input', renderTable);
+        document.getElementById('roleUser').addEventListener('change', renderTable);
+        document.getElementById('statusUser').addEventListener('change', renderTable);
+    });
+
+    function renderTable() {
+        const search = document.getElementById('searchUser').value.trim();
+        const role = document.getElementById('roleUser').value;
+        const status = document.getElementById('statusUser').value;
+
+        const users = PagulungStore.getUsers({ search, role, status });
+        const tbody = document.getElementById('tblUsers');
+
+        if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Tidak ada user ditemukan</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        users.forEach((u, idx) => {
+            let roleBadge = '<span class="badge bg-secondary">Kasir</span>';
+            if (u.role === 'gudang') roleBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-warehouse me-1"></i>Gudang</span>';
+            else if (u.role === 'pimpinan') roleBadge = '<span class="badge bg-danger"><i class="fas fa-user-tie me-1"></i>Pimpinan</span>';
+            else if (u.role === 'kasir') roleBadge = '<span class="badge bg-success"><i class="fas fa-cash-register me-1"></i>Kasir</span>';
+
+            const isAktif = u.status === 'aktif';
+            const statusBadge = isAktif ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Nonaktif</span>';
+            const toggleIcon = isAktif ? 'fa-toggle-on text-success' : 'fa-toggle-off text-muted';
+
+            html += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td><strong class="font-monospace text-primary">${u.username}</strong></td>
+                    <td><strong>${u.nama_lengkap}</strong></td>
+                    <td>${roleBadge}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none" onclick="toggleStatus(${u.id})" title="Klik untuk ubah status">
+                            <i class="fas ${toggleIcon} fs-5 me-1"></i> ${statusBadge}
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-warning text-dark" onclick="openEditUserModal(${u.id})" title="Edit User">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="handleDeleteUser(${u.id}, '${u.username}')" title="Hapus User">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function toggleStatus(id) {
+        const newStatus = PagulungStore.toggleUserStatus(id);
+        showToast(`Status user diubah menjadi ${newStatus}`, 'info');
+        renderTable();
+    }
+
+    function openAddUserModal() {
+        document.getElementById('userId').value = '';
+        document.getElementById('uUsername').value = '';
+        document.getElementById('uUsername').readOnly = false;
+        document.getElementById('uNama').value = '';
+        document.getElementById('uRole').value = 'kasir';
+        document.getElementById('modalUserTitle').textContent = 'Tambah User Baru';
+        userModal.show();
+    }
+
+    function openEditUserModal(id) {
+        const u = PagulungStore.getUsers().find(item => item.id === id);
+        if (!u) return;
+
+        document.getElementById('userId').value = u.id;
+        document.getElementById('uUsername').value = u.username;
+        document.getElementById('uUsername').readOnly = true;
+        document.getElementById('uNama').value = u.nama_lengkap;
+        document.getElementById('uRole').value = u.role;
+        document.getElementById('modalUserTitle').textContent = 'Edit Data User';
+        userModal.show();
+    }
+
+    function handleSaveUser(e) {
+        e.preventDefault();
+        const id = document.getElementById('userId').value;
+        const username = document.getElementById('uUsername').value.trim();
+        const nama_lengkap = document.getElementById('uNama').value.trim();
+        const role = document.getElementById('uRole').value;
+
+        PagulungStore.saveUser({ id, username, nama_lengkap, role });
+        userModal.hide();
+        showToast('Data user berhasil disimpan!', 'success');
+        renderTable();
+    }
+
+    function handleDeleteUser(id, username) {
+        if (confirm(`Yakin ingin menghapus akun "${username}"?`)) {
+            PagulungStore.deleteUser(id);
+            showToast(`User ${username} berhasil dihapus`, 'success');
+            renderTable();
+        }
+    }
+    </script>
+</body>
+</html>

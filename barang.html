@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Barang - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard-gudang.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategori.html">
+                    <i class="fas fa-tags"></i> Kategori
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="barang.html">
+                    <i class="fas fa-box"></i> Data Barang
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="barang-masuk.html">
+                    <i class="fas fa-arrow-down"></i> Barang Masuk
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="laporan.html">
+                    <i class="fas fa-file-alt"></i> Laporan
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Data Barang</span>
+                
+                <div class="d-flex align-items-center">
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" id="notificationBell" type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span><i class="fas fa-bell me-2"></i>Notifikasi Stok</span>
+                            </div>
+                            <div class="notification-body" id="notificationBody">
+                                <div class="notification-empty">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Memuat notifikasi...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">G</div>
+                        <div class="user-details">
+                            <div class="name">Staff Gudang</div>
+                            <div class="role">GUDANG</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <h1 class="page-title">
+                <i class="fas fa-box"></i> Data Barang Persediaan
+            </h1>
+
+            <!-- Filter Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form id="filterForm" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Cari Barang</label>
+                            <input type="text" class="form-control" id="filterSearch" placeholder="Kode atau nama barang...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Kategori</label>
+                            <select class="form-select" id="filterCategory">
+                                <option value="">Semua Kategori</option>
+                                <!-- Dynamic -->
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status Stok</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">Semua Status</option>
+                                <option value="aman">Aman</option>
+                                <option value="waspada">Waspada (Kurang ROP)</option>
+                                <option value="habis">Habis (0)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-secondary w-100" onclick="resetFilters()">
+                                <i class="fas fa-redo me-1"></i>Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-list me-2"></i>Daftar Barang</span>
+                    <a href="barang-tambah.html" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-2"></i>Tambah Barang Baru
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="10%">Kode</th>
+                                    <th width="15%">Kategori</th>
+                                    <th width="24%">Nama Barang</th>
+                                    <th width="13%" class="text-end">Harga Jual</th>
+                                    <th width="10%" class="text-center">Stok</th>
+                                    <th width="8%" class="text-center">Satuan</th>
+                                    <th width="10%" class="text-center">Status</th>
+                                    <th width="15%" class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblDataBarang">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Detail Barang -->
+    <div class="modal fade" id="modalDetailBarang" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Detail Spesifikasi Barang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr>
+                                    <td width="40%"><strong>Kode Barang</strong></td>
+                                    <td id="dtKode">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nama Barang</strong></td>
+                                    <td id="dtNama">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kategori</strong></td>
+                                    <td id="dtKategori">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Harga Jual</strong></td>
+                                    <td id="dtHarga">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Satuan Dasar</strong></td>
+                                    <td id="dtSatuan">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Satuan Penjualan</strong></td>
+                                    <td id="dtSatuanJual">-</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr>
+                                    <td width="50%"><strong>Stok Saat Ini</strong></td>
+                                    <td id="dtStok" class="fw-bold">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status Stok</strong></td>
+                                    <td id="dtStatus">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Reorder Point (ROP)</strong></td>
+                                    <td id="dtRop" class="text-primary fw-bold">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Demand Rata-rata/Hari</strong></td>
+                                    <td id="dtDemand">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lama Pengiriman (Lead Time)</strong></td>
+                                    <td id="dtLeadTime">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Safety Stock (SS)</strong></td>
+                                    <td id="dtSafetyStock">-</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    let modalDetail;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        modalDetail = new bootstrap.Modal(document.getElementById('modalDetailBarang'));
+
+        // Populate Categories
+        const catSelect = document.getElementById('filterCategory');
+        const categories = PagulungStore.getCategories();
+        categories.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = `${c.kode_kategori} - ${c.nama_kategori}`;
+            catSelect.appendChild(opt);
+        });
+
+        // Check URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('search')) {
+            document.getElementById('filterSearch').value = urlParams.get('search');
+        }
+        if (urlParams.get('status')) {
+            document.getElementById('filterStatus').value = urlParams.get('status');
+        }
+        if (urlParams.get('category')) {
+            document.getElementById('filterCategory').value = urlParams.get('category');
+        }
+
+        renderTable();
+
+        // Listeners
+        document.getElementById('filterSearch').addEventListener('input', renderTable);
+        document.getElementById('filterCategory').addEventListener('change', renderTable);
+        document.getElementById('filterStatus').addEventListener('change', renderTable);
+    });
+
+    function resetFilters() {
+        document.getElementById('filterSearch').value = '';
+        document.getElementById('filterCategory').value = '';
+        document.getElementById('filterStatus').value = '';
+        renderTable();
+    }
+
+    function renderTable() {
+        const search = document.getElementById('filterSearch').value.trim();
+        const category_id = document.getElementById('filterCategory').value;
+        const status = document.getElementById('filterStatus').value;
+
+        const items = PagulungStore.getBarang({ search, category_id, status });
+        const tbody = document.getElementById('tblDataBarang');
+
+        if (items.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="text-center py-4 text-muted">
+                        <i class="fas fa-search me-2"></i>Tidak ada data barang yang sesuai dengan filter
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        let html = '';
+        items.forEach((item, index) => {
+            let statusBadge = '<span class="badge badge-status-aman">Aman</span>';
+            if (item.status_stok === 'Habis') {
+                statusBadge = '<span class="badge badge-status-habis">Habis</span>';
+            } else if (item.status_stok === 'Waspada') {
+                statusBadge = '<span class="badge badge-status-waspada">Waspada</span>';
+            }
+
+            const stokDisplay = PagulungStore.formatStokDisplay(item.stok_total, item.satuan, item.satuan_jual, item.gram_per_satuan_jual);
+            let displaySatuan = item.satuan;
+            if (item.satuan === 'kg' && item.stok_total < 1000) {
+                displaySatuan = 'g';
+            }
+
+            html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong class="text-primary font-monospace">${item.kode_barang}</strong></td>
+                    <td><span class="badge bg-light text-dark border">${item.nama_kategori}</span></td>
+                    <td><strong>${item.nama_barang}</strong></td>
+                    <td class="text-end fw-bold">${PagulungStore.formatRupiah(item.harga_jual)}</td>
+                    <td class="text-center fw-bold fs-6">${stokDisplay}</td>
+                    <td class="text-center text-muted">${displaySatuan}</td>
+                    <td class="text-center">${statusBadge}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-info text-white" onclick="viewDetail(${item.id})" title="Lihat Detail ROP">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="barang-edit.html?id=${item.id}" class="btn btn-sm btn-warning text-dark" title="Edit Barang">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="handleDelete(${item.id}, '${item.nama_barang}')" title="Hapus Barang">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function viewDetail(id) {
+        const item = PagulungStore.getBarangById(id);
+        if (!item) return;
+
+        document.getElementById('dtKode').textContent = item.kode_barang;
+        document.getElementById('dtNama').textContent = item.nama_barang;
+        document.getElementById('dtKategori').textContent = item.nama_kategori;
+        document.getElementById('dtHarga').textContent = PagulungStore.formatRupiah(item.harga_jual);
+        document.getElementById('dtSatuan').textContent = item.satuan;
+        document.getElementById('dtSatuanJual').textContent = item.satuan_jual ? `${item.satuan_jual} (${item.gram_per_satuan_jual}g)` : '-';
+
+        const formattedStok = PagulungStore.formatStokDisplay(item.stok_total, item.satuan, item.satuan_jual, item.gram_per_satuan_jual);
+        document.getElementById('dtStok').textContent = `${formattedStok} ${item.satuan}`;
+        
+        let statusBadge = '<span class="badge badge-status-aman">Aman</span>';
+        if (item.status_stok === 'Habis') statusBadge = '<span class="badge badge-status-habis">Habis</span>';
+        else if (item.status_stok === 'Waspada') statusBadge = '<span class="badge badge-status-waspada">Waspada</span>';
+        document.getElementById('dtStatus').innerHTML = statusBadge;
+
+        const formattedRop = PagulungStore.formatStokDisplay(item.reorder_point, item.satuan, item.satuan_jual, item.gram_per_satuan_jual);
+        document.getElementById('dtRop').textContent = `${formattedRop} (${item.reorder_point} satuan asli)`;
+        document.getElementById('dtDemand').textContent = `${item.rata_penjualan_harian || 0} unit / hari`;
+        document.getElementById('dtLeadTime').textContent = `${item.lama_pengiriman || 7} hari`;
+        document.getElementById('dtSafetyStock').textContent = `${item.safety_stock} unit`;
+
+        modalDetail.show();
+    }
+
+    function handleDelete(id, nama) {
+        if (confirm(`Yakin ingin menghapus barang "${nama}"?`)) {
+            PagulungStore.deleteBarang(id);
+            showToast(`Barang ${nama} berhasil dihapus`, 'success');
+            renderTable();
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Barang - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard-gudang.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategori.html">
+                    <i class="fas fa-tags"></i> Kategori
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="barang.html">
+                    <i class="fas fa-box"></i> Data Barang
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="barang-masuk.html">
+                    <i class="fas fa-arrow-down"></i> Barang Masuk
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="laporan.html">
+                    <i class="fas fa-file-alt"></i> Laporan
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Edit Data Barang</span>
+                <div class="user-info">
+                    <div class="user-avatar">G</div>
+                    <div class="user-details">
+                        <div class="name">Staff Gudang</div>
+                        <div class="role">GUDANG</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="page-title mb-0">
+                    <i class="fas fa-edit"></i> Edit Barang
+                </h1>
+                <a href="barang.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali ke Data Barang
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-box me-2"></i>Perbarui Informasi Barang
+                </div>
+                <div class="card-body">
+                    <form id="formEdit" onsubmit="handleFormEdit(event)">
+                        <input type="hidden" id="editId">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kategori <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editKategori" required>
+                                    <!-- Dynamic -->
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kode Barang</label>
+                                <input type="text" class="form-control font-monospace" id="editKode" readonly style="background: #f8f9fa;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nama Barang <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editNama" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Satuan Stok Gudang <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editSatuan" required onchange="handleSatuanChange()">
+                                    <option value="pcs">Pcs</option>
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="gram">Gram (g)</option>
+                                    <option value="bungkus">Bungkus</option>
+                                    <option value="box">Box</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Harga Jual (Rp) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control" id="editHarga" required min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Konversi Satuan Jual jika satuan = kg -->
+                        <div class="row" id="rowSatuanJual" style="display: none;">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Satuan Dijual di Kasir</label>
+                                <input type="text" class="form-control" id="editSatuanJual" placeholder="Misal: pcs, bungkus">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Gram per Satuan Jual</label>
+                                <input type="number" class="form-control" id="editGramPerSatuan" placeholder="Misal: 50">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Demand Harian (Rata-rata penjualan/hari)</label>
+                                <input type="number" class="form-control" id="editDemand" min="0" oninput="updateRopPreview()">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Lead Time (Lama Pengiriman/hari)</label>
+                                <input type="number" class="form-control" id="editLeadTime" min="1" oninput="updateRopPreview()">
+                            </div>
+                        </div>
+
+                        <!-- ROP Calculation Box -->
+                        <div class="alert alert-warning border-0 p-3 mb-4" style="background: rgba(245, 197, 66, 0.15); border-left: 4px solid #F5C542 !important;">
+                            <h6 class="text-dark fw-bold mb-2"><i class="fas fa-calculator me-2"></i>Kalkulasi Otomatis Reorder Point (ROP)</h6>
+                            <div class="row text-center text-md-start">
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Safety Stock:</small>
+                                    <strong id="previewSS" class="fs-6 text-dark">-</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Reorder Point (ROP):</small>
+                                    <strong id="previewROP" class="fs-6 text-primary">-</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Stok Saat Ini:</small>
+                                    <span class="badge bg-secondary" id="previewStokTotal">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="barang.html" class="btn btn-secondary">Batal</a>
+                            <button type="submit" class="btn btn-warning text-dark">
+                                <i class="fas fa-save me-1"></i>Perbarui Barang
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const catSelect = document.getElementById('editKategori');
+        const categories = PagulungStore.getCategories();
+        categories.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = `${c.nama_kategori} (${c.kode_kategori})`;
+            catSelect.appendChild(opt);
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id') || 10;
+        const item = PagulungStore.getBarangById(id);
+
+        if (!item) {
+            alert('Barang tidak ditemukan!');
+            window.location.href = 'barang.html';
+            return;
+        }
+
+        document.getElementById('editId').value = item.id;
+        document.getElementById('editKategori').value = item.category_id;
+        document.getElementById('editKode').value = item.kode_barang;
+        document.getElementById('editNama').value = item.nama_barang;
+        document.getElementById('editSatuan').value = item.satuan;
+        document.getElementById('editHarga').value = item.harga_jual;
+        document.getElementById('editSatuanJual').value = item.satuan_jual || '';
+        document.getElementById('editGramPerSatuan').value = item.gram_per_satuan_jual || '';
+        document.getElementById('editDemand').value = item.rata_penjualan_harian || 2;
+        document.getElementById('editLeadTime').value = item.lama_pengiriman || 7;
+        document.getElementById('previewStokTotal').textContent = `${PagulungStore.formatStokDisplay(item.stok_total, item.satuan, item.satuan_jual, item.gram_per_satuan_jual)} ${item.satuan}`;
+
+        handleSatuanChange();
+        updateRopPreview();
+    });
+
+    function handleSatuanChange() {
+        const sat = document.getElementById('editSatuan').value;
+        const rowSatuanJual = document.getElementById('rowSatuanJual');
+        if (sat === 'kg') {
+            rowSatuanJual.style.display = 'flex';
+        } else {
+            rowSatuanJual.style.display = 'none';
+        }
+        updateRopPreview();
+    }
+
+    function updateRopPreview() {
+        const demand = parseInt(document.getElementById('editDemand').value) || 0;
+        const lt = parseInt(document.getElementById('editLeadTime').value) || 7;
+        const satuan = document.getElementById('editSatuan').value;
+        const satuanJual = document.getElementById('editSatuanJual').value;
+        const gramPerSatuan = document.getElementById('editGramPerSatuan').value;
+
+        const ropRes = PagulungStore.calculateROP(demand, lt, satuan, satuanJual, gramPerSatuan);
+        document.getElementById('previewSS').textContent = `${ropRes.safety_stock} ${satuan}`;
+        document.getElementById('previewROP').textContent = `${ropRes.reorder_point} ${satuan}`;
+    }
+
+    function handleFormEdit(e) {
+        e.preventDefault();
+        const id = document.getElementById('editId').value;
+        const category_id = document.getElementById('editKategori').value;
+        const nama_barang = document.getElementById('editNama').value.trim();
+        const satuan = document.getElementById('editSatuan').value;
+        const harga_jual = parseFloat(document.getElementById('editHarga').value) || 0;
+        const rata_penjualan_harian = parseInt(document.getElementById('editDemand').value) || 0;
+        const lama_pengiriman = parseInt(document.getElementById('editLeadTime').value) || 7;
+        const satuan_jual = document.getElementById('editSatuanJual').value.trim() || null;
+        const gram_per_satuan_jual = parseInt(document.getElementById('editGramPerSatuan').value) || null;
+
+        PagulungStore.saveBarang({
+            id,
+            category_id,
+            nama_barang,
+            satuan,
+            harga_jual,
+            rata_penjualan_harian,
+            lama_pengiriman,
+            satuan_jual,
+            gram_per_satuan_jual
+        });
+
+        alert(`Perubahan barang ${nama_barang} berhasil disimpan!`);
+        window.location.href = 'barang.html';
+    }
+    </script>
+</body>
+</html>

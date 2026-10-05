@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point of Sale (POS) - Pagulung Tambako Bone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+
+    <style>
+        .product-search-item {
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .product-search-item:hover {
+            background-color: #F8F9FA;
+            border-left-color: #F5C542;
+            transform: translateX(3px);
+        }
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="images/login.png" alt="Logo Pagulung">
+            </div>
+            <h3>Pagulung Tambako</h3>
+            <small>Sistem Persediaan Gudang</small>
+        </div>
+        
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard-kasir.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="pos.html">
+                    <i class="fas fa-cash-register"></i> Transaksi (POS)
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="javascript:void(0)" onclick="logoutApp()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <span class="navbar-brand">Point of Sale (Kasir)</span>
+                
+                <div class="d-flex align-items-center">
+                    <div class="notification-wrapper">
+                        <button class="notification-bell" id="notificationBell" type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <span><i class="fas fa-bell me-2"></i>Notifikasi Stok</span>
+                            </div>
+                            <div class="notification-body" id="notificationBody"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">K</div>
+                        <div class="user-details">
+                            <div class="name">Kasir Default</div>
+                            <div class="role">KASIR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <h1 class="page-title">
+                <i class="fas fa-cash-register"></i> Transaksi Penjualan (POS)
+            </h1>
+
+            <div class="row">
+                <!-- Left: Shopping Cart -->
+                <div class="col-lg-7 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-shopping-cart me-2"></i>Keranjang Belanja Pelanggan</span>
+                            <span class="badge bg-primary" id="cartCountBadge">0 Item</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="table-responsive flex-grow-1">
+                                <table class="table align-middle" id="cartTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Barang</th>
+                                            <th width="20%" class="text-end">Harga</th>
+                                            <th width="22%" class="text-center">Jumlah</th>
+                                            <th width="20%" class="text-end">Subtotal</th>
+                                            <th width="8%" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cartItems">
+                                        <tr id="emptyCart">
+                                            <td colspan="5" class="text-center text-muted py-5">
+                                                <i class="fas fa-cart-shopping fa-3x mb-3 text-secondary" style="opacity: 0.3;"></i>
+                                                <p class="mb-0">Keranjang masih kosong</p>
+                                                <small>Pilih barang dari katalog di samping kanan untuk memulai transaksi</small>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="table-light">
+                                        <tr>
+                                            <th colspan="3" class="text-end fs-5">TOTAL PEMBAYARAN:</th>
+                                            <th class="text-end fs-5 text-success font-monospace" id="totalAmount">Rp 0</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+                                <button type="button" class="btn btn-outline-danger" onclick="clearCart()">
+                                    <i class="fas fa-trash me-1"></i>Kosongkan
+                                </button>
+                                <button type="button" class="btn btn-success btn-lg px-4" onclick="openCheckoutModal()" id="btnCheckout" disabled>
+                                    <i class="fas fa-check-circle me-2"></i>Proses Pembayaran
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Product Search & Quick Add -->
+                <div class="col-lg-5 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <i class="fas fa-magnifying-glass me-2"></i>Katalog Produk Siap Jual
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control form-control-lg" id="searchPos" placeholder="Ketik nama atau kode barang..." autofocus>
+                            </div>
+                            
+                            <div id="searchResults" class="list-group" style="max-height: 520px; overflow-y: auto;">
+                                <!-- Dynamic List Items -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Checkout Pembayaran -->
+    <div class="modal fade" id="modalCheckout" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-credit-card me-2"></i>Proses Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Total Tagihan Belanja</label>
+                        <input type="text" class="form-control form-control-lg text-primary fw-bold fs-4" id="checkoutTotal" readonly style="background: #F8F9FA;">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nominal Pembayaran Diterima (Rp) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control form-control-lg font-monospace fs-4" id="inpBayar" placeholder="0" min="0" oninput="calculateChange()">
+                        
+                        <!-- Quick cash buttons -->
+                        <div class="d-flex gap-2 mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setQuickCash('exact')">Uang Pas</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setQuickCash(20000)">20.000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setQuickCash(50000)">50.000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setQuickCash(100000)">100.000</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Uang Kembalian</label>
+                        <input type="text" class="form-control form-control-lg fw-bold fs-4 text-success" id="checkoutKembalian" readonly style="background: #E8F5E9;">
+                    </div>
+
+                    <div id="paymentAlert" class="alert alert-danger py-2 d-none">
+                        <i class="fas fa-exclamation-circle me-1"></i>Nominal pembayaran masih kurang!
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success btn-lg" onclick="confirmPayment()" id="btnConfirmPayment" disabled>
+                        <i class="fas fa-check-circle me-1"></i>Selesaikan Transaksi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Success Transaksi -->
+    <div class="modal fade" id="modalSuccess" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered text-center">
+            <div class="modal-content p-4">
+                <div class="mb-3">
+                    <i class="fas fa-circle-check text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="fw-bold mb-1">Transaksi Berhasil!</h4>
+                <p class="text-muted mb-3" id="successTrxCode">TRX-...</p>
+                <div class="alert alert-light border mb-4 text-start">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Total:</span>
+                        <strong id="sucTotal">-</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Bayar:</span>
+                        <strong id="sucBayar">-</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Kembalian:</span>
+                        <strong class="text-success" id="sucKembalian">-</strong>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetPos()">
+                        Transaksi Baru
+                    </button>
+                    <a href="javascript:void(0)" id="btnStrukLink" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-print me-1"></i>Cetak Struk
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    let cart = [];
+    let checkoutModal;
+    let successModal;
+    let totalCartAmount = 0;
+    let lastTransaction = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        checkoutModal = new bootstrap.Modal(document.getElementById('modalCheckout'));
+        successModal = new bootstrap.Modal(document.getElementById('modalSuccess'));
+
+        renderCatalog();
+
+        document.getElementById('searchPos').addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            const items = document.querySelectorAll('#searchResults .product-search-item');
+            items.forEach(el => {
+                const text = el.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    function renderCatalog() {
+        const listContainer = document.getElementById('searchResults');
+        const items = PagulungStore.getBarang().filter(b => b.stok_total > 0);
+
+        if (items.length === 0) {
+            listContainer.innerHTML = `<div class="p-3 text-center text-muted">Tidak ada produk dengan stok tersedia</div>`;
+            return;
+        }
+
+        let html = '';
+        items.forEach(item => {
+            const stokDisp = PagulungStore.formatStokDisplay(item.stok_total, item.satuan, item.satuan_jual, item.gram_per_satuan_jual);
+            let displaySatuan = item.satuan;
+            if (item.satuan === 'kg' && item.stok_total < 1000) displaySatuan = 'g';
+
+            html += `
+                <div class="list-group-item list-group-item-action product-search-item p-3" onclick="addToCart(${item.id})">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="badge bg-dark font-monospace text-warning me-1">${item.kode_barang}</span>
+                            <span class="fw-bold text-dark">${item.nama_barang}</span><br>
+                            <small class="text-muted"><i class="fas fa-tag me-1"></i>${item.nama_kategori}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-success fw-bold">${PagulungStore.formatRupiah(item.harga_jual)}</span><br>
+                            <small class="badge bg-light text-secondary border">Stok: ${stokDisp} ${displaySatuan}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        listContainer.innerHTML = html;
+    }
+
+    function addToCart(id) {
+        const barang = PagulungStore.getBarangById(id);
+        if (!barang) return;
+
+        // Calculate max stock limit in selling units
+        let maxQty = barang.stok_total;
+        if (barang.satuan === 'kg' && barang.satuan_jual && barang.gram_per_satuan_jual) {
+            maxQty = Math.floor(barang.stok_total / barang.gram_per_satuan_jual);
+        }
+
+        if (maxQty <= 0) {
+            alert('Stok tidak mencukupi untuk satuan jual!');
+            return;
+        }
+
+        const existing = cart.find(c => c.id === barang.id);
+        if (existing) {
+            if (existing.quantity < maxQty) {
+                existing.quantity++;
+            } else {
+                alert(`Stok maksimal tercapai (${maxQty} item)`);
+                return;
+            }
+        } else {
+            cart.push({
+                id: barang.id,
+                kode_barang: barang.kode_barang,
+                nama_barang: barang.nama_barang,
+                harga_jual: barang.harga_jual,
+                satuan: barang.satuan,
+                satuan_jual: barang.satuan_jual,
+                gram_per_satuan_jual: barang.gram_per_satuan_jual,
+                max_stock: maxQty,
+                quantity: 1
+            });
+        }
+
+        renderCart();
+    }
+
+    function renderCart() {
+        const tbody = document.getElementById('cartItems');
+        const countBadge = document.getElementById('cartCountBadge');
+        const btnCheckout = document.getElementById('btnCheckout');
+        const totalEl = document.getElementById('totalAmount');
+
+        if (cart.length === 0) {
+            tbody.innerHTML = `
+                <tr id="emptyCart">
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="fas fa-cart-shopping fa-3x mb-3 text-secondary" style="opacity: 0.3;"></i>
+                        <p class="mb-0">Keranjang masih kosong</p>
+                        <small>Pilih barang dari katalog di samping kanan untuk memulai transaksi</small>
+                    </td>
+                </tr>
+            `;
+            countBadge.textContent = '0 Item';
+            btnCheckout.disabled = true;
+            totalCartAmount = 0;
+            totalEl.textContent = 'Rp 0';
+            return;
+        }
+
+        let html = '';
+        totalCartAmount = 0;
+        let totalItems = 0;
+
+        cart.forEach((c, idx) => {
+            const subtotal = c.harga_jual * c.quantity;
+            totalCartAmount += subtotal;
+            totalItems += c.quantity;
+
+            html += `
+                <tr>
+                    <td>
+                        <strong class="text-dark">${c.nama_barang}</strong><br>
+                        <small class="text-muted font-monospace">${c.kode_barang}</small>
+                    </td>
+                    <td class="text-end">${PagulungStore.formatRupiah(c.harga_jual)}</td>
+                    <td class="text-center">
+                        <div class="d-inline-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-secondary qty-btn" onclick="updateQty(${idx}, ${c.quantity - 1})">-</button>
+                            <span class="px-2 fw-bold">${c.quantity}</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary qty-btn" onclick="updateQty(${idx}, ${c.quantity + 1})">+</button>
+                        </div>
+                    </td>
+                    <td class="text-end fw-bold font-monospace">${PagulungStore.formatRupiah(subtotal)}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${idx})">
+                            <i class="fas fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+        countBadge.textContent = `${totalItems} Item`;
+        totalEl.textContent = PagulungStore.formatRupiah(totalCartAmount);
+        btnCheckout.disabled = false;
+    }
+
+    function updateQty(idx, newQty) {
+        if (newQty <= 0) {
+            removeFromCart(idx);
+            return;
+        }
+        if (newQty > cart[idx].max_stock) {
+            alert(`Stok maksimal tercapai (${cart[idx].max_stock} item)`);
+            return;
+        }
+        cart[idx].quantity = newQty;
+        renderCart();
+    }
+
+    function removeFromCart(idx) {
+        cart.splice(idx, 1);
+        renderCart();
+    }
+
+    function clearCart() {
+        if (cart.length > 0 && confirm('Kosongkan semua item di keranjang?')) {
+            cart = [];
+            renderCart();
+        }
+    }
+
+    function openCheckoutModal() {
+        if (cart.length === 0) return;
+        document.getElementById('checkoutTotal').value = PagulungStore.formatRupiah(totalCartAmount);
+        document.getElementById('inpBayar').value = '';
+        document.getElementById('checkoutKembalian').value = 'Rp 0';
+        document.getElementById('btnConfirmPayment').disabled = true;
+        document.getElementById('paymentAlert').classList.add('d-none');
+        checkoutModal.show();
+    }
+
+    function setQuickCash(amount) {
+        if (amount === 'exact') {
+            document.getElementById('inpBayar').value = totalCartAmount;
+        } else {
+            document.getElementById('inpBayar').value = amount;
+        }
+        calculateChange();
+    }
+
+    function calculateChange() {
+        const bayar = parseFloat(document.getElementById('inpBayar').value) || 0;
+        const kembalian = bayar - totalCartAmount;
+        const kembalianEl = document.getElementById('checkoutKembalian');
+        const alertEl = document.getElementById('paymentAlert');
+        const btnConfirm = document.getElementById('btnConfirmPayment');
+
+        if (bayar >= totalCartAmount) {
+            kembalianEl.value = PagulungStore.formatRupiah(kembalian);
+            alertEl.classList.add('d-none');
+            btnConfirm.disabled = false;
+        } else {
+            kembalianEl.value = 'Rp 0';
+            if (bayar > 0) alertEl.classList.remove('d-none');
+            else alertEl.classList.add('d-none');
+            btnConfirm.disabled = true;
+        }
+    }
+
+    function confirmPayment() {
+        const bayar = parseFloat(document.getElementById('inpBayar').value) || totalCartAmount;
+        const res = PagulungStore.processSale(cart, bayar);
+
+        if (res.success) {
+            lastTransaction = res.transaction;
+            checkoutModal.hide();
+
+            // Populate Success Modal
+            document.getElementById('successTrxCode').textContent = lastTransaction.kode_transaksi;
+            document.getElementById('sucTotal').textContent = PagulungStore.formatRupiah(lastTransaction.total_harga);
+            document.getElementById('sucBayar').textContent = PagulungStore.formatRupiah(lastTransaction.bayar);
+            document.getElementById('sucKembalian').textContent = PagulungStore.formatRupiah(lastTransaction.kembalian);
+            document.getElementById('btnStrukLink').href = `struk.html?id=${lastTransaction.id}`;
+
+            successModal.show();
+            renderCatalog(); // Re-render product stock
+        }
+    }
+
+    function resetPos() {
+        cart = [];
+        renderCart();
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagulung Tambako Bone Community - Sistem Persediaan Gudang</title>
+    <link rel="icon" type="image/png" href="images/login.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Landing CSS & Demo Nav -->
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/demo-nav.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="landing-navbar" id="landingNav">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="index.html" class="nav-brand">
+                    <img src="images/login.png" alt="Logo Pagulung" class="nav-logo-img">
+                    <span>Pagulung Tambako Bone</span>
+                </a>
+                <div class="nav-links d-none d-md-flex">
+                    <a href="#beranda">Beranda</a>
+                    <a href="#fitur">Fitur</a>
+                    <a href="#produk">Produk</a>
+                    <a href="#statistik">Statistik</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="login.html" class="btn-masuk">
+                        <i class="fas fa-sign-in-alt me-2"></i>Masuk ke Sistem
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="beranda">
+        <div class="hero-overlay"></div>
+        <div class="container position-relative">
+            <div class="row align-items-center min-vh-80">
+                <div class="col-lg-7">
+                    <div class="hero-content">
+                        <span class="hero-badge">
+                            <i class="fas fa-leaf me-2"></i>Sistem Persediaan Gudang UMKM
+                        </span>
+                        <h1 class="hero-title">
+                            Kelola Stok <span class="text-accent">Produk Tembako</span> Lebih Cerdas & Akurat
+                        </h1>
+                        <p class="hero-desc">
+                            Sistem manajemen persediaan berbasis algoritma FIFO (First In First Out) dan 
+                            Reorder Point (ROP) otomatis. Dilengkapi Point of Sale (POS) cepat dan pelacakan batch 
+                            untuk Pagulung Tambako Bone Community.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="login.html" class="btn-hero-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Masuk ke Sistem
+                            </a>
+                            <a href="#produk" class="btn-hero-secondary">
+                                <i class="fas fa-boxes me-2"></i>Lihat Produk & Stok
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="hero-visual">
+                        <div class="hero-card">
+                            <div class="hero-card-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span class="ms-2 text-white-50" style="font-size: 0.75rem;">Status Real-Time</span>
+                            </div>
+                            <div class="hero-card-body">
+                                <div class="mini-stat">
+                                    <i class="fas fa-box text-accent"></i>
+                                    <div>
+                                        <small>Total Jenis Produk</small>
+                                        <strong id="heroTotalJenis">-</strong>
+                                    </div>
+                                </div>
+                                <div class="mini-stat">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <div>
+                                        <small>Stok Aman</small>
+                                        <strong id="heroStokAman">-</strong>
+                                    </div>
+                                </div>
+                                <div class="mini-stat">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                    <div>
+                                        <small>Perlu Restock (ROP)</small>
+                                        <strong id="heroStokWaspada">-</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fitur Section -->
+    <section class="fitur-section" id="fitur">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Keunggulan</span>
+                <h2 class="section-title">Fitur Unggulan Sistem</h2>
+                <p class="section-desc">Solusi komprehensif dari pergudangan hingga kasir transaksi penjualan</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="fitur-card">
+                        <div class="fitur-icon"><i class="fas fa-warehouse"></i></div>
+                        <h5>Manajemen Stok Real-time</h5>
+                        <p>Pantau sisa stok barang secara live dengan status Aman, Waspada, dan Habis berbasis batch.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="fitur-card">
+                        <div class="fitur-icon"><i class="fas fa-cash-register"></i></div>
+                        <h5>Point of Sale (POS)</h5>
+                        <p>Transaksi kasir cepat, kalkulasi kembalian otomatis, cetak struk pembayaran, dan pemotongan stok instan.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="fitur-card">
+                        <div class="fitur-icon"><i class="fas fa-layer-group"></i></div>
+                        <h5>FIFO & Batch Tracking</h5>
+                        <p>Pencatatan batch barang masuk dengan pengeluaran stok terlama lebih dulu saat terjadi penjualan.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="fitur-card">
+                        <div class="fitur-icon"><i class="fas fa-bell"></i></div>
+                        <h5>Reorder Point (ROP) Otomatis</h5>
+                        <p>Perhitungan stok pengaman dan notifikasi dini saat persediaan barang mendekati ambang batas kritis.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="fitur-card">
+                        <div class="fitur-icon"><i class="fas fa-chart-line"></i></div>
+                        <h5>Laporan & Rekapitulasi</h5>
+                        <p>Laporan barang masuk, stok barang, transaksi penjualan harian/bulanan, dan laporan HPP siap cetak & export.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="fitur-card">
+                        <div class="fitur-icon"><i class="fas fa-users-cog"></i></div>
+                        <h5>Role-Based Access (RBAC)</h5>
+                        <p>Tiga peran terisolasi: <strong>Gudang</strong> (stok & batch), <strong>Kasir</strong> (transaksi POS), dan <strong>Pimpinan</strong> (monitoring & laporan).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produk Section -->
+    <section class="produk-section" id="produk">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Katalog Persediaan</span>
+                <h2 class="section-title">Daftar Produk & Stok Real-Time</h2>
+                <p class="section-desc">Informasi stok dan ketersediaan barang di gudang Pagulung Tambako</p>
+            </div>
+
+            <!-- Filter Kategori -->
+            <div class="filter-bar" id="categoryFilterBar">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-th me-1"></i>Semua Kategori
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchProduk" placeholder="Cari nama atau kode barang..." class="search-input">
+            </div>
+
+            <!-- Produk Grid -->
+            <div class="row g-4" id="produkGrid">
+                <!-- Dynamically populated from PagulungStore -->
+            </div>
+
+            <!-- Produk Habis Section -->
+            <div class="stok-habis-section mt-5" id="sectionProdukHabis" style="display: none;">
+                <h5><i class="fas fa-exclamation-circle text-danger me-2"></i>Produk Stok Habis (Perlu Pengadaan)</h5>
+                <div class="stok-habis-grid" id="gridProdukHabis">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistik Section -->
+    <section class="statistik-section" id="statistik">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-box"></i></div>
+                        <div class="stat-value" id="statJenis">-</div>
+                        <div class="stat-label">Jenis Produk</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-tags"></i></div>
+                        <div class="stat-value" id="statKategori">-</div>
+                        <div class="stat-label">Kategori</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-value" id="statAman">-</div>
+                        <div class="stat-label">Stok Aman</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-value" id="statPerhatian">-</div>
+                        <div class="stat-label">Perlu Perhatian (ROP/Habis)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="footer-brand">
+                        <img src="images/login.png" alt="Logo Pagulung" class="footer-logo">
+                        <div>
+                            <strong>Pagulung Tambako Bone Community</strong>
+                            <small>Sistem Informasi Persediaan Gudang & POS</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <p class="footer-copy">&copy; 2026 Pagulung Tambako Bone. All rights reserved. • Hosted on GitHub Pages</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Store & Demo Nav -->
+    <script src="js/store.js"></script>
+    <script src="js/demo-nav.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('landingNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // 2. Load Stats
+        const stats = PagulungStore.getStats();
+        document.getElementById('heroTotalJenis').textContent = stats.totalJenis;
+        document.getElementById('heroStokAman').textContent = stats.aman;
+        document.getElementById('heroStokWaspada').textContent = stats.waspada;
+
+        document.getElementById('statJenis').textContent = stats.totalJenis;
+        document.getElementById('statKategori').textContent = stats.totalKategori;
+        document.getElementById('statAman').textContent = stats.aman;
+        document.getElementById('statPerhatian').textContent = stats.waspada + stats.habis;
+
+        // 3. Category Buttons
+        const categories = PagulungStore.getCategories();
+        const filterBar = document.getElementById('categoryFilterBar');
+        categories.forEach(c => {
+            const slug = c.nama_kategori.toLowerCase().replace(/\s+/g, '-');
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.dataset.filter = slug;
+            btn.textContent = c.nama_kategori;
+            filterBar.appendChild(btn);
+        });
+
+        // 4. Render Products
+        const allBarang = PagulungStore.getBarang();
+        const grid = document.getElementById('produkGrid');
+        const gridHabis = document.getElementById('gridProdukHabis');
+        const secHabis = document.getElementById('sectionProdukHabis');
+
+        const availableBarang = allBarang.filter(b => b.stok_total > 0);
+        const outOfStockBarang = allBarang.filter(b => b.stok_total === 0);
+
+        if (availableBarang.length === 0) {
+            grid.innerHTML = `
+                <div class="col-12">
+                    <div class="empty-state text-center py-5">
+                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Belum ada barang aktif dengan stok tersedia</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            let html = '';
+            availableBarang.forEach(b => {
+                const slug = b.nama_kategori.toLowerCase().replace(/\s+/g, '-');
+                const stokFormatted = PagulungStore.formatStokDisplay(b.stok_total, b.satuan, b.satuan_jual, b.gram_per_satuan_jual);
+                let satuanDisplay = b.satuan;
+                if (b.satuan === 'kg' && b.satuan_jual && b.gram_per_satuan_jual && b.stok_total < 1000) {
+                    satuanDisplay = 'g';
+                }
+
+                html += `
+                    <div class="col-sm-6 col-md-4 col-lg-3 produk-item" 
+                         data-kategori="${slug}" 
+                         data-nama="${b.nama_barang.toLowerCase()} ${b.kode_barang.toLowerCase()}">
+                        <div class="produk-card">
+                            <div class="produk-card-top">
+                                <span class="produk-kategori">${b.nama_kategori}</span>
+                                <span class="produk-status status-${b.status_stok.toLowerCase()}">
+                                    ${b.status_stok}
+                                </span>
+                            </div>
+                            <div class="produk-card-body">
+                                <div class="produk-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h6 class="produk-nama">${b.nama_barang}</h6>
+                                <span class="produk-kode">${b.kode_barang}</span>
+                            </div>
+                            <div class="produk-card-footer">
+                                <div class="produk-harga">
+                                    <small>Harga</small>
+                                    <strong>${PagulungStore.formatRupiah(b.harga_jual)}</strong>
+                                </div>
+                                <div class="produk-stok">
+                                    <small>Stok</small>
+                                    <strong>${stokFormatted} <span class="satuan">${satuanDisplay}</span></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // Out of stock list
+        if (outOfStockBarang.length > 0) {
+            secHabis.style.display = 'block';
+            let habisHtml = '';
+            outOfStockBarang.forEach(b => {
+                habisHtml += `
+                    <div class="stok-habis-item">
+                        <span class="nama"><i class="fas fa-ban text-danger me-2"></i>${b.nama_barang}</span>
+                        <span class="kode">${b.kode_barang} (${b.nama_kategori})</span>
+                    </div>
+                `;
+            });
+            gridHabis.innerHTML = habisHtml;
+        }
+
+        // 5. Filter & Search listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.dataset.filter;
+                document.querySelectorAll('.produk-item').forEach(item => {
+                    if (filter === 'all' || item.dataset.kategori === filter) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        document.getElementById('searchProduk').addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            document.querySelectorAll('.produk-item').forEach(item => {
+                if (item.dataset.nama.includes(query)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            if (query.length > 0) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            } else {
+                const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+                if (allBtn) allBtn.classList.add('active');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
